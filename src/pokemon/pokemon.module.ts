@@ -3,6 +3,7 @@ import { PokemonService } from './pokemon.service';
 import { PokemonController } from './pokemon.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Pokemon, PokemonSchema } from './entities/pokemon.entity';
+import { ConfigModule } from '@nestjs/config';
 
 /*
   Una vez que hemos terminado nuestra entidad pasamos a importarla como un feature de Mongoose especificando
@@ -14,12 +15,16 @@ import { Pokemon, PokemonSchema } from './entities/pokemon.entity';
   controllers: [PokemonController],
   providers: [PokemonService],
   imports: [
+    ConfigModule,
     MongooseModule.forFeature([
       {
         name: Pokemon.name, /* Se trata del nombre de la clase no del nombre de variable en la base de datos*/
         schema: PokemonSchema,
       },
     ])
+  ],
+  exports: [
+    MongooseModule
   ]
 })
 export class PokemonModule {}

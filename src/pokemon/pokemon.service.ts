@@ -4,14 +4,23 @@ import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
 import { isValidObjectId, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import {ConfigModule, ConfigService} from '@nestjs/config';
+
 
 @Injectable()
 export class PokemonService {
-  
+  private defaultLimit: number;
   constructor(
     @InjectModel( Pokemon.name)
-    private readonly pokemonModel: Model<Pokemon>
-  ){}
+    private readonly pokemonModel: Model<Pokemon>,
+
+    private readonly configService: ConfigService,
+  ){
+    //console.log({defaultLimit: configService.get<number>('defaultLimit')})
+    this.defaultLimit = configService.get<number>('defaultLimit') ?? 10; 
+    
+  }
   
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase();
@@ -24,9 +33,24 @@ export class PokemonService {
     }
   }
 
-  findAll() {
-    return `This action returns all pokemon`;
-  }
+  findAll(paginationDto: PaginationDto) {
+    //console.log('DEFAULT_LIMIT:', process.env.DEFAULT_LIMIT);
+    //console.log('Tipo de DEFAULT_LIMIT:', typeof process.env.DEFAULT_LIMIT);
+    //const limitValue = parseInt(process.env.DEFAULT_LIMIT || '10', 10);
+    //console.log('Limit Value:', limitValue);
+    //console.log('Limit Value:', typeof limitValue);
+    const {limit = this.defaultLimit, offset = 0} = paginationDto
+
+
+    return this.pokemonModel.find()
+      .limit(limit)
+      .skip(offset)
+      .sort({
+        no:1
+      })
+      .select('-__v');
+}
+
 
   async findOne(term: string) {
     let pokemon: Pokemon| null = null; //Debemos inicializar antes de retornar, ya que si el if es falso podria ser undefined ya que pokemon nunca se asignaria
