@@ -25,13 +25,15 @@ import { JoiValidationSchema } from './config/joi.validation';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname,'..' ,'public'),
       }),
-
-    MongooseModule.forRoot(process.env.MONGODB || 'mongodb://mongo:YUaLAuCQnwjIgCbItraQaOVJKdyVuoTs@maglev.proxy.rlwy.net:49972',
+    
+      /*MongooseModule.forRoot(process.env.MONGODB || 'mongodb://mongo:YUaLAuCQnwjIgCbItraQaOVJKdyVuoTs@maglev.proxy.rlwy.net:49972',
     {
       dbName: 'pokemonsdb'
-    } 
-    ),
-    /* Se coloca mongodb con el puerto y se especifica*/
+    }),*/
+
+
+    MongooseModule.forRoot(process.env.MONGODB || 'mongodb://localhost:27017/nest-pokemon'),
+   
 
     PokemonModule, CommonModule, SeedModule 
   ],
